@@ -1,38 +1,37 @@
 #include <iostream>
-#include <vector>
+#include <string>
+#include <cctype>
 using namespace std;
 
-vector<vector<int>> generate(int numRows) {
-    vector<vector<int>> triangle;
+bool isPalindrome(string s) {
+    int left = 0;
+    int right = s.size() - 1;
 
-    for (int i = 0; i < numRows; ++i) {
-        vector<int> row(i + 1, 1); // Initialize row with 1s
+    while (left < right) {
+        // Skip non-alphanumeric characters
+        while (left < right && !isalnum(s[left])) left++;
+        while (left < right && !isalnum(s[right])) right--;
 
-        // Fill in the middle values
-        for (int j = 1; j < i; ++j) {
-            row[j] = triangle[i - 1][j - 1] + triangle[i - 1][j];
-        }
+        // Compare after converting to lowercase
+        if (tolower(s[left]) != tolower(s[right]))
+            return false;
 
-        triangle.push_back(row);
+        left++;
+        right--;
     }
 
-    return triangle;
+    return true;
 }
 
 int main() {
-    int numRows;
-    cout << "Enter the number of rows: ";
-    cin >> numRows;
+    string s;
+    cout << "Enter a string: ";
+    getline(cin, s);
 
-    vector<vector<int>> result = generate(numRows);
-
-    cout << "Pascal's Triangle:\n";
-    for (const auto& row : result) {
-        for (int val : row) {
-            cout << val << " ";
-        }
-        cout << endl;
-    }
+    if (isPalindrome(s))
+        cout << "true\n";
+    else
+        cout << "false\n";
 
     return 0;
 }
