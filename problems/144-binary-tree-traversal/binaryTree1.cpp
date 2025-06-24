@@ -4,77 +4,71 @@
 #include <stack>
 using namespace std;
 
-// TreeNode definition
-struct TreeNode {
+struct TreeNode{
     int val;
     TreeNode *left;
     TreeNode *right;
-    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+    TreeNode(int x): val(x), left(nullptr), right(nullptr){}
 };
 
-// Build tree from level-order input
-TreeNode* buildTree() {
-    cout << "Enter values in level-order (-1 for null): ";
+TreeNode* buildTree(){
+    cout<<"Enter values in level-order (-1 for null): ";
     int val;
-    cin >> val;
-
-    if (val == -1) return nullptr;
+    cin>>val;
+    if(val == -1) return nullptr;
 
     TreeNode* root = new TreeNode(val);
     queue<TreeNode*> q;
     q.push(root);
 
-    while (!q.empty()) {
+    while(!q.empty()){
         TreeNode* current = q.front();
         q.pop();
 
         int leftVal, rightVal;
-        cin >> leftVal;
-        if (leftVal != -1) {
+        cin>>leftVal;
+        if(leftVal != -1){
             current->left = new TreeNode(leftVal);
             q.push(current->left);
         }
 
-        cin >> rightVal;
-        if (rightVal != -1) {
+        cin>>rightVal;
+        if(rightVal != -1){
             current->right = new TreeNode(rightVal);
             q.push(current->right);
         }
     }
-
     return root;
 }
 
-// Preorder traversal (iterative)
-vector<int> preorderTraversal(TreeNode* root) {
+vector<int> preorderTraversal(TreeNode* root){
     vector<int> result;
-    if (!root) return result;
+    if(!root) return result;
 
     stack<TreeNode*> st;
     st.push(root);
 
-    while (!st.empty()) {
+    while(!st.empty()){
         TreeNode* node = st.top();
         st.pop();
         result.push_back(node->val);
 
-        if (node->right) st.push(node->right);
-        if (node->left) st.push(node->left);
+        if(node->right) st.push(node->right);
+        if(node->left) st.push(node->left);
     }
-
     return result;
 }
 
-// Main function
-int main() {
+
+int main(){
     TreeNode* root = buildTree();
     vector<int> result = preorderTraversal(root);
 
-    cout << "Preorder Traversal: ";
-    for (int val : result) {
-        cout << val << " ";
+    cout<<"Preorder Traversal: ";
+    for(int val : result){
+        cout<<val<<" ";
     }
-    cout << endl;
+    cout<<endl;
 
     return 0;
 }
