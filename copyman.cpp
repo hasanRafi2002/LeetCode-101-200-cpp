@@ -1,80 +1,100 @@
 #include <iostream>
-#include <vector>
-#include <queue>
-#include <stack>
+#include <unordered_map>
 using namespace std;
 
-// TreeNode definition
-struct TreeNode {
+struct ListNode {
     int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+    ListNode *next;
+    ListNode(int x) : val(x), next(nullptr) {}
 };
 
-// Build tree from level-order input
-TreeNode* buildTree() {
-    cout << "Enter values in level-order (-1 for null): ";
+// Function to create a linked list and return its head
+ListNode* createList(int n) {
+    if (n == 0) return nullptr;
+
     int val;
+    cout << "Enter " << n << " values: ";
     cin >> val;
-
-    if (val == -1) return nullptr;
-
-    TreeNode* root = new TreeNode(val);
-    queue<TreeNode*> q;
-    q.push(root);
-
-    while (!q.empty()) {
-        TreeNode* current = q.front();
-        q.pop();
-
-        int leftVal, rightVal;
-        cin >> leftVal;
-        if (leftVal != -1) {
-            current->left = new TreeNode(leftVal);
-            q.push(current->left);
-        }
-
-        cin >> rightVal;
-        if (rightVal != -1) {
-            current->right = new TreeNode(rightVal);
-            q.push(current->right);
-        }
+    ListNode* head = new ListNode(val);
+    ListNode* curr = head;
+    for (int i = 1; i < n; ++i) {
+        cin >> val;
+        curr->next = new ListNode(val);
+        curr = curr->next;
     }
-
-    return root;
+    return head;
 }
 
-// Preorder traversal (iterative)
-vector<int> preorderTraversal(TreeNode* root) {
-    vector<int> result;
-    if (!root) return result;
+// Function to find the intersection node
+ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+    if (!headA || !headB) return nullptr;
 
-    stack<TreeNode*> st;
-    st.push(root);
+    ListNode* ptrA = headA;
+    ListNode* ptrB = headB;
 
-    while (!st.empty()) {
-        TreeNode* node = st.top();
-        st.pop();
-        result.push_back(node->val);
-
-        if (node->right) st.push(node->right);
-        if (node->left) st.push(node->left);
+    while (ptrA != ptrB) {
+        ptrA = ptrA ? ptrA->next : headB;
+        ptrB = ptrB ? ptrB->next : headA;
     }
 
-    return result;
+    return ptrA;
 }
 
-// Main function
+// Print linked list
+void printList(ListNode* head) {
+    while (head) {
+        cout << head->val << " -> ";
+        head = head->next;
+    }
+    cout << "NULL\n";
+}
+
 int main() {
-    TreeNode* root = buildTree();
-    vector<int> result = preorderTraversal(root);
+    int n1, n2, c;
+    cout << "Enter number of nodes in List A: ";
+    cin >> n1;
+    ListNode* headA = createList(n1);
 
-    cout << "Preorder Traversal: ";
-    for (int val : result) {
-        cout << val << " ";
+    cout << "Enter number of nodes in List B: ";
+    cin >> n2;
+    ListNode* headB = createList(n2);
+
+    cout << "Enter number of nodes in common (intersection): ";
+    cin >> c;
+
+    ListNode* commonHead = nullptr;
+    if (c > 0) {
+        cout << "Enter " << c << " values for the common part: ";
+        int val;
+        cin >> val;
+        commonHead = new ListNode(val);
+        ListNode* curr = commonHead;
+        for (int i = 1; i < c; ++i) {
+            cin >> val;
+            curr->next = new ListNode(val);
+            curr = curr->next;
+        }
+
+        // Attach the common part to List A and List B
+        ListNode* temp = headA;
+        while (temp && temp->next) temp = temp->next;
+        if (temp) temp->next = commonHead;
+
+        temp = headB;
+        while (temp && temp->next) temp = temp->next;
+        if (temp) temp->next = commonHead;
     }
-    cout << endl;
+
+    cout << "\nList A: ";
+    printList(headA);
+    cout << "List B: ";
+    printList(headB);
+
+    ListNode* result = getIntersectionNode(headA, headB);
+    if (result)
+        cout << "Intersection at node with value: " << result->val << endl;
+    else
+        cout << "No intersection.\n";
 
     return 0;
 }
